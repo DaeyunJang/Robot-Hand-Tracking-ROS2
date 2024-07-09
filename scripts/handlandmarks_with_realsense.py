@@ -1,3 +1,5 @@
+import queue
+
 import numpy as np
 import sys
 import os
@@ -57,20 +59,20 @@ def handlandmarks_with_realsense(queue_handpose, queue_points, queue_handpose_su
 
                 hld.hand_detection(img_color, img_depth, rs_main_camera.depth_intrinsics)
 
-                queue_handpose.put(hld.hand_pose)
-                queue_points.put(hld.canonical_points)
-                queue_handpose_sub.put(hld.hand_pose)
-                queue_points_sub.put(hld.canonical_points)
+                empty = queue_handpose.empty()
+                if queue_handpose.empty():
+                    queue_handpose.put(hld.hand_pose)
+                    queue_points.put(hld.canonical_points)
+                empty = queue_handpose_sub.empty()
+                if queue_handpose_sub.empty():
+                    queue_handpose_sub.put(hld.hand_pose)
+                    queue_points_sub.put(hld.canonical_points)
 
-                # you can use canonical points also
+                # queue_handpose.put(hld.hand_pose)
+                # queue_points.put(hld.canonical_points)
+                # queue_handpose_sub.put(hld.hand_pose)
+                # queue_points_sub.put(hld.canonical_points)
 
-                # print(f'=============== Queue.put() ============================')
-                # pose = hld.hand_pose['landmarks']
-                # print(f'count = {count}')
-                # print(f'[Realsense Node] {time.time()} : {pose}')
-                # print(f'[Realsense Node] {time.time()} : {queue_points}')
-                print(f'[Handlandmark Process] pps = {count / (time.time() - s_t)}')
-                # print(f'========================================================')
                 count += 1
 
                 # use opencv to visualize results.
@@ -79,13 +81,16 @@ def handlandmarks_with_realsense(queue_handpose, queue_points, queue_handpose_su
 
                 key = cv2.pollKey()
                 if key & 0xFF == ord('q') or key == 27:
-                    cv2.destroyAllWindows()
                     break
+
+                # if cv2.waitKey(1) == ord('q'):
+                #     break
 
             except RuntimeError as runexpt:
                 print(runexpt, " frame skipped")
                 continue
     finally:
+        cv2.destroyAllWindows()
         rs_main_camera.stop()
         print("main process closed")
 
@@ -97,9 +102,11 @@ def signal_handler(sig, frame):
     sys.exit(1)
 
 if __name__ == '__main__':
-    queue1 = mp.Queue()
-    queue2 = mp.Queue()
-    hand_process = mp.Process(target=handlandmarks_with_realsense, args=(queue1, queue2))
+    queue1 = mp.Manager().Queue(maxsize=1)
+    queue2 = mp.Manager().Queue(maxsize=1)
+    queue3 = mp.Manager().Queue(maxsize=1)
+    queue4 = mp.Manager().Queue(maxsize=1)
+    hand_process = mp.Process(target=handlandmarks_with_realsense, args=(queue1, queue2, queue3, queue4))
     hand_process.start()
 
     signal.signal(signal.SIGINT, signal_handler)

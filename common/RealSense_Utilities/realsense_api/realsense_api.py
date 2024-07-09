@@ -181,9 +181,14 @@ class RealSenseCamera:
         elif self.device_type == 'd415':
             self.jsonObj = json.load(open("./d415_0131.json"))
 
+
         print(f"{self.device_type} is selected...")
 
         self.pipeline = rs.pipeline()
+
+        # restart for initializing
+        # self.stop()
+
         config = rs.config()
         config.enable_device(self.device.get_info(rs.camera_info.serial_number))
 
@@ -349,7 +354,8 @@ class RealSenseCamera:
         json_string = str(self.jsonObj).replace("'", '\"')
 
         advnc_mode_arg = rs.rs400_advanced_mode(self.device)
-        advnc_mode_arg.load_json(json_string)
+        # advnc_mode_arg.load_json(json_string)
 
     def stop(self):
+        print("[realsense api] pipeline.stop")
         self.pipeline.stop()

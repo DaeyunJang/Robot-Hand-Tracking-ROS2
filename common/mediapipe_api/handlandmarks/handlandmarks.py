@@ -125,7 +125,9 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
                 self.drawing_image = drawing_image
 
         e_time = time.time()
-        self.pps = 1 / (e_time - s_time)
+        if e_time != s_time:
+            self.pps = 1 / (e_time - s_time)
+
 
     def compare_coordinate_canonical_with_world(self, hand_landmarks):
         """
@@ -158,12 +160,11 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         # world_point = np.asarray(world_point, dtype=int)
         world_point = np.asarray(world_point)
 
-        # depth_avg = np.mean(world_point[:, 2])
-        depth_avg = np.mean(world_point_iqr[:, 2])
+        depth_avg = np.mean(world_point[:, 2])
         canonical_point[:, 2] = canonical_point[:, 2] + depth_avg + self.hand_thickness
 
-        replace_points = world_point_iqr
-        xyz_distances = np.linalg.norm(world_point_iqr - canonical_point, axis=1)
+        replace_points = world_point
+        xyz_distances = np.linalg.norm(world_point - canonical_point, axis=1)
         replace_points[xyz_distances >= self.replace_threshold] = canonical_point[xyz_distances >= self.replace_threshold]
         return canonical_point, world_point, world_point_iqr, replace_points
         pass
@@ -309,7 +310,7 @@ def main():
     # cv2.imshow('test_image', test_image)
     cv2.imshow('mp2_image', HLD.drawing_image)
 
-    test_image = cv2.imread("yj.png")
+    test_image = cv2.imread("yj.jpg")
 
     arbitrary_depth_image = np.random.randint(0, 601, (480, 640))
     HLD.hand_detection(test_image, arbitrary_depth_image, )

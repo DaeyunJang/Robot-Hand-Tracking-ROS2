@@ -14,12 +14,12 @@ if __name__ == '__main__':
     data_process = mp.Process(target=handlandmarks_with_realsense, args=(queue_handpose, queue_points, queue_handpose_sub, queue_points_sub))
     data_process.start()
 
-    tcp_process = mp.Process(target=start_tcp_server, args=(queue_handpose, queue_points))
-    tcp_process.start()
-
     plot_process = mp.Process(target=start_real_time_plot, args=(queue_handpose_sub, queue_points_sub))
     plot_process.start()
 
+    tcp_process = mp.Process(target=start_tcp_server, args=(queue_handpose, queue_points))
+    tcp_process.start()
+
     data_process.join()
-    tcp_process.join()
     plot_process.join()
+    tcp_process.join()

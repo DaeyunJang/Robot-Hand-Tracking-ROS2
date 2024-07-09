@@ -14,8 +14,6 @@ class RealTimePlot():
         self.num_points = num_points
         self.queue_handpose = queue_handpose
         self.queue_points = queue_points
-        self.handpose = None
-        self.hand_points = np.zeros((21, 3))
 
         self.fig = plt.figure()
 
@@ -37,18 +35,29 @@ class RealTimePlot():
         if self.count == 1: # start
             self.s_t = time.time()
         try:
-            # if self.queue_handpose.full():
-            self.handpose = self.queue_handpose.get()
-            self.hand_points = self.queue_points.get()
-            print(f"[Process-3D plot] handpose : {self.handpose}")
-        except Exception as e:
+            # queue_handpose = self.queue_handpose.get_nowait()
+            # queue_points = self.queue_points.get_nowait()
+            queue_handpose = self.queue_handpose.get()
+            queue_points = self.queue_points.get()
+        except (mp.queues.Empty):
+            # print(f'{mp.queues.Empty} queue empty')
             return
 
+        # print(f'{queue_handpose}')
+        # print(f'=============== Queue.get() ============================')
+        # print(f'count = {self.count}')
+        # print(f'[3D Plot Node] {time.time()} : {self.handpose}')
+        # print(f'[Realsense Node] {time.time()} : {queue_points}')
+        print(f'[3D plot] pps = {self.count / (time.time() - self.s_t)}')
+        # print(f'========================================================')
         self.pps = self.count / (time.time() - self.s_t)
         self.count += 1
 
-        if self.handpose['landmarks'] is None or self.hand_points is None:
-            return None
+        # self.fig.text(0.95, 0.95, f'FPS: {self.pps:.2f}', ha='right', va='top',
+        #               fontsize=12)
+
+        if queue_handpose['landmarks'] is None or queue_points is None:
+            return
 
         self.ax.cla()
         self.ax_cp.cla()
@@ -64,24 +73,23 @@ class RealTimePlot():
         self.ax_cp.set_xlabel('X Label')
         self.ax_cp.set_ylabel('Y Label')
         self.ax_cp.set_zlabel('Z Label')
-        self.ax_cp.set_xlim(-1000, 1000)
-        self.ax_cp.set_ylim(-1000, 1000)
-        self.ax_cp.set_zlim(0, 1000)
+        self.ax_cp.set_xlim(300, 500)
+        self.ax_cp.set_ylim(100, 300)
+        self.ax_cp.set_zlim(400, 700)
 
         self.ax_wp.set_xlabel('X Label')
         self.ax_wp.set_ylabel('Y Label')
         self.ax_wp.set_zlabel('Z Label')
-        self.ax_wp.set_xlim(-1000, 1000)
-        self.ax_wp.set_ylim(-1000, 1000)
-        self.ax_wp.set_zlim(0, 1000)
+        self.ax_wp.set_xlim(300, 500)
+        self.ax_wp.set_ylim(100, 300)
+        self.ax_wp.set_zlim(400, 700)
 
         colors = ['black', 'blue', 'green', 'orange', 'red', 'black']
         intervals = [4, 8, 12, 16, 20]
 
-        l_p = self.handpose['landmarks']
-        w_p = self.handpose['world_landmarks']
-        c_p = self.hand_points
-
+        l_p = queue_handpose['landmarks']
+        w_p = queue_handpose['world_landmarks']
+        c_p = queue_points
         self.scatter = self.ax.scatter(l_p[:, 0], l_p[:, 1], l_p[:, 2], color='black', s=5, alpha=1)
         self.scatter_canonical_points = self.ax_cp.scatter(c_p[:, 0], c_p[:, 1], c_p[:, 2], color='black', s=5, alpha=1)
         self.scatter_world_points = self.ax_wp.scatter(w_p[:, 0], w_p[:, 1], w_p[:, 2], color='black', s=5, alpha=1)
@@ -93,6 +101,7 @@ class RealTimePlot():
             self.ax_cp.plot(c_p[start_idx:end_idx + 1, 0], c_p[start_idx:end_idx + 1, 1], c_p[start_idx:end_idx + 1, 2], color='blue')
             self.ax_wp.plot(w_p[start_idx:end_idx + 1, 0], w_p[start_idx:end_idx + 1, 1], w_p[start_idx:end_idx + 1, 2], color='red')
 
+        return
     def plot_show(self):
         plt.show()
 
