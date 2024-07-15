@@ -50,6 +50,7 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         self.color_image = np.zeros((image_height, image_width, 3))
         self.depth_image = np.zeros((image_height, image_width))
         self.drawing_image = np.zeros((image_height, image_width, 3))   # show mediapipe algorithm image
+        self.drawing_depth_image  = np.zeros((image_height, image_width, 3))   # show mediapipe algorithm image
 
         self.hand_thickness = 10  # mm
         self.pps = 0
@@ -63,9 +64,10 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         # the BGR image to RGB.
         self.depth_intrinsics = depth_intrinsic
         self.color_image = color_frame
-        self.color_image = cv2.flip(self.color_image, 1)
+        # self.color_image = cv2.flip(self.color_image, 1)
         self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2RGB)
         self.depth_image = depth_frame
+        self.depth_image_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_image, alpha=0.2), cv2.COLORMAP_JET)
 
         # To improve performance, optionally mark the image as not writeable to
         # pass by reference.
@@ -75,7 +77,10 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         # Draw the hand annotations on the image.
         self.color_image.flags.writeable = True
         self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_RGB2BGR)
+
         self.drawing_image = self.color_image
+        self.drawing_depth_image = self.depth_image_colormap
+
         self.hand_results.clear()
         self.hand_pose = {key: None for key in self.hand_pose}
 
@@ -96,7 +101,7 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
                     self.hand_landmarks[idx, 1] = cy
                     self.hand_landmarks[idx, 2] = cz
 
-                canonical_points, world_points, world_points_iqr, replace_points = (
+                canonical_points, world_points, world_points_iqr, replace_points, depth_avg = (
                     self.compare_coordinate_canonical_with_world(self.hand_landmarks))
 
                 self.canonical_points = canonical_points
@@ -122,7 +127,35 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
                     # mp_drawing_styles.get_default_hand_landmarks_style(),
                     # mp_drawing_styles.get_default_hand_connections_style()
                 )
+
+                img_depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_image, alpha=0.3),
+                                                            cv2.COLORMAP_JET)
+                drawing_depth_image = self.depth_image_colormap
+                self.mp_drawing.draw_landmarks(
+                    drawing_depth_image,
+                    hand_landmarks,
+                    self.mp_hands.HAND_CONNECTIONS,
+                    # mp_drawing_styles.get_default_hand_landmarks_style(),
+                    # mp_drawing_styles.get_default_hand_connections_style()
+                )
+                drawing_image = cv2.putText(img=drawing_image,
+                                            text=f'Depth(avg) = {depth_avg}',
+                                            org=(50, 50),
+                                            fontFace=cv2.FONT_HERSHEY_PLAIN,
+                                            fontScale=1,
+                                            color=(0,255,0),
+                                            thickness=2,
+                                            lineType=cv2.LINE_AA)
+                drawing_image = cv2.putText(img=drawing_image,
+                                            text=f'index finger depth = {world_points[7,2]}',
+                                            org=(50, 80),
+                                            fontFace=cv2.FONT_HERSHEY_PLAIN,
+                                            fontScale=1,
+                                            color=(0, 255, 0),
+                                            thickness=2,
+                                            lineType=cv2.LINE_AA)
                 self.drawing_image = drawing_image
+                self.drawing_depth_image = drawing_depth_image
 
         e_time = time.time()
         if e_time != s_time:
@@ -159,6 +192,7 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
 
         # world_point = np.asarray(world_point, dtype=int)
         world_point = np.asarray(world_point)
+        # world_point = np.asarray(world_point_iqr)
 
         depth_avg = np.mean(world_point[:, 2])
         canonical_point[:, 2] = canonical_point[:, 2] + depth_avg + self.hand_thickness
@@ -166,7 +200,7 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         replace_points = world_point
         xyz_distances = np.linalg.norm(world_point - canonical_point, axis=1)
         replace_points[xyz_distances >= self.replace_threshold] = canonical_point[xyz_distances >= self.replace_threshold]
-        return canonical_point, world_point, world_point_iqr, replace_points
+        return canonical_point, world_point, world_point_iqr, replace_points, depth_avg
         pass
 
     @staticmethod

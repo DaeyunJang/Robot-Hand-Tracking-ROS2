@@ -213,6 +213,7 @@ class RealSenseCamera:
         # Get depth scale
         depth_sensor = self.profile.get_device().first_depth_sensor()
         depth_sensor.set_option(rs.option.emitter_enabled, 1)
+        # depth_sensor.set_option(rs.option.visual_preset, 4) # 4 corresponds to 'Hand' preset
         self.depth_scale = depth_sensor.get_depth_scale()
 
         self.color_intrinsics = self.profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()

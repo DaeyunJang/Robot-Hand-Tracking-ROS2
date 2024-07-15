@@ -19,13 +19,13 @@ class RealTimePlot():
 
         self.fig = plt.figure()
 
-        self.ax = self.fig.add_subplot(231, projection='3d')
+        self.ax = self.fig.add_subplot(131, projection='3d')
         self.scatter = self.ax.scatter([], [], [])
 
-        self.ax_cp = self.fig.add_subplot(232, projection='3d')
+        self.ax_cp = self.fig.add_subplot(132, projection='3d')
         self.scatter_world_points = self.ax_cp.scatter([], [], [])
 
-        self.ax_wp = self.fig.add_subplot(233, projection='3d')
+        self.ax_wp = self.fig.add_subplot(133, projection='3d')
         self.scatter_canonical_points = self.ax_wp.scatter([], [], [])
 
         self.ani = FuncAnimation(self.fig, self.update_plot, frames=1, interval=10)
@@ -40,7 +40,7 @@ class RealTimePlot():
             # if self.queue_handpose.full():
             self.handpose = self.queue_handpose.get()
             self.hand_points = self.queue_points.get()
-            print(f"[Process-3D plot] handpose : {self.handpose}")
+            # print(f"[Process-3D plot] handpose : {self.handpose}")
         except Exception as e:
             return
 
@@ -54,6 +54,7 @@ class RealTimePlot():
         self.ax_cp.cla()
         self.ax_wp.cla()
 
+        self.ax.set_title('normalized')
         self.ax.set_xlabel('X Label')
         self.ax.set_ylabel('Y Label')
         self.ax.set_zlabel('Z Label')
@@ -61,19 +62,21 @@ class RealTimePlot():
         # self.ax.set_ylim(-1, 1)
         # self.ax.set_zlim(-1, 1)
 
+        self.ax_cp.set_title('canonical')
         self.ax_cp.set_xlabel('X Label')
         self.ax_cp.set_ylabel('Y Label')
         self.ax_cp.set_zlabel('Z Label')
-        self.ax_cp.set_xlim(-1000, 1000)
-        self.ax_cp.set_ylim(-1000, 1000)
-        self.ax_cp.set_zlim(0, 1000)
+        self.ax_cp.set_xlim(0, 640)
+        self.ax_cp.set_ylim(0, 480)
+        self.ax_cp.set_zlim(200, 700)
 
+        self.ax_wp.set_title('world coordinate')
         self.ax_wp.set_xlabel('X Label')
         self.ax_wp.set_ylabel('Y Label')
         self.ax_wp.set_zlabel('Z Label')
-        self.ax_wp.set_xlim(-1000, 1000)
-        self.ax_wp.set_ylim(-1000, 1000)
-        self.ax_wp.set_zlim(0, 1000)
+        self.ax_wp.set_xlim(-300, 300)
+        self.ax_wp.set_ylim(-300, 300)
+        self.ax_wp.set_zlim(200, 700)
 
         colors = ['black', 'blue', 'green', 'orange', 'red', 'black']
         intervals = [4, 8, 12, 16, 20]

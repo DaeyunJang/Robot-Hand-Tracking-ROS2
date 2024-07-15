@@ -51,11 +51,13 @@ def handlandmarks_with_realsense(queue_handpose, queue_points, queue_handpose_su
                 frameset = rs_main_camera.spatial_filter.process(frameset)
                 frameset = rs_main_camera.temporal_filter.process(frameset)
                 frameset = rs_main_camera.disparity_to_depth.process(frameset)
-                frameset = rs_main_camera.hole_filling_filter.process(frameset).as_frameset()
+                # frameset = rs_main_camera.hole_filling_filter.process(frameset)
+                frameset = frameset.as_frameset()
 
                 # It is recommended to use a copy of the RGB image frame.
                 img_color = np.copy(frame_to_np_array(frameset.get_color_frame()))
                 img_depth = np.copy(frame_to_np_array(frameset.get_depth_frame()))
+                img_depth_colormap = cv2.applyColorMap(cv2.convertScaleAbs(img_depth, alpha=0.3), cv2.COLORMAP_JET)
 
                 hld.hand_detection(img_color, img_depth, rs_main_camera.depth_intrinsics)
 
@@ -74,10 +76,13 @@ def handlandmarks_with_realsense(queue_handpose, queue_points, queue_handpose_su
                 # queue_points_sub.put(hld.canonical_points)
 
                 count += 1
+                # all_img = np.hstack([hld.drawing_image, img_color, img_depth_colormap])
+                all_img = np.hstack([hld.drawing_image, hld.drawing_depth_image])
 
                 # use opencv to visualize results.
                 if hld.drawing_image is not None:
-                    cv2.imshow('RealSense_front', hld.drawing_image)
+                    # cv2.imshow('RealSense_front', hld.drawing_image)
+                    cv2.imshow('RealSense_front', all_img)
 
                 key = cv2.pollKey()
                 if key & 0xFF == ord('q') or key == 27:
