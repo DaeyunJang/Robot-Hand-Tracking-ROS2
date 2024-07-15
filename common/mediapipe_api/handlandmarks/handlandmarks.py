@@ -67,7 +67,7 @@ class MediaPipeHandLandmarkDetector(HandLandmarks):
         # self.color_image = cv2.flip(self.color_image, 1)
         self.color_image = cv2.cvtColor(self.color_image, cv2.COLOR_BGR2RGB)
         self.depth_image = depth_frame
-        self.depth_image_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_image, alpha=0.2), cv2.COLORMAP_JET)
+        self.depth_image_colormap = cv2.applyColorMap(cv2.convertScaleAbs(self.depth_image, alpha=0.4), cv2.COLORMAP_JET)
 
         # To improve performance, optionally mark the image as not writeable to
         # pass by reference.

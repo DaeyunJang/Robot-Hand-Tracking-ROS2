@@ -1,3 +1,5 @@
+import time
+
 import numpy as np
 import pyrealsense2 as rs
 import json
@@ -119,7 +121,8 @@ class RealSenseCamera:
         self.persistency_index = 5
 
         # Holes Filling filter attribute
-        self.hole_filling_param = 1
+        self.hole_filling_param = 1 # farest
+        # self.hole_filling_param = 2 # nearest
 
         self.decimation_filter = rs.decimation_filter()
         self.decimation_filter.set_option(
@@ -355,7 +358,16 @@ class RealSenseCamera:
         json_string = str(self.jsonObj).replace("'", '\"')
 
         advnc_mode_arg = rs.rs400_advanced_mode(self.device)
-        # advnc_mode_arg.load_json(json_string)
+        if not advnc_mode_arg.is_enabled():
+            advnc_mode_arg.toggle_advanced_mode(True)
+
+        for i in range(5):
+            try:
+                advnc_mode_arg.load_json(json_string)
+                break
+            except Exception as e:
+                print(f'[realsense_api.py] {e}. Retry ({i}/5)')
+                time.sleep(1)
 
     def stop(self):
         print("[realsense api] pipeline.stop")

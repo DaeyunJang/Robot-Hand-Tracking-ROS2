@@ -51,7 +51,7 @@ def handlandmarks_with_realsense(queue_handpose, queue_points, queue_handpose_su
                 frameset = rs_main_camera.spatial_filter.process(frameset)
                 frameset = rs_main_camera.temporal_filter.process(frameset)
                 frameset = rs_main_camera.disparity_to_depth.process(frameset)
-                # frameset = rs_main_camera.hole_filling_filter.process(frameset)
+                frameset = rs_main_camera.hole_filling_filter.process(frameset)
                 frameset = frameset.as_frameset()
 
                 # It is recommended to use a copy of the RGB image frame.
