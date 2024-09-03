@@ -1,3 +1,4 @@
+import queue
 import socket
 import multiprocessing as mp
 import threading
@@ -5,6 +6,7 @@ import json
 import time
 import numpy as np
 import struct
+import traceback
 
 class TCPServer:
     def __init__(self, queue_handpose, queue_points):
@@ -37,11 +39,13 @@ class TCPServer:
                     self.get_hand_landmarks()
                     self.broadcast(self.client)
                 else:
+                    print(f'handle client fail')
                     break
 
                 time.sleep(0.01)
         except Exception as e:
             print(f"Exception in handle_client: {e}")
+            traceback.print_exc()
         finally:
             print(f"[*] Client {self.client.getpeername()} disconnected.")
             self.client.close()
@@ -49,7 +53,6 @@ class TCPServer:
     def client_callback(self):
         request = self.client.recv(self.buffer_size)
         if not request:
-            # self.client = None
             return False
 
         if request.decode('utf-8') == 'GET_HAND':
@@ -57,6 +60,8 @@ class TCPServer:
 
 
     def broadcast(self, client_socket):
+        # t = self.handpose['world_landmarks']
+        print(f'handpose : {self.handpose}')
         if self.handpose is None or self.handpose['index'] is None:
             data = b'NONE' + b'\0' * (self.buffer_size - len('NONE'))
             serialized_data = data
@@ -74,13 +79,16 @@ class TCPServer:
             client_socket.sendall(serialized_data)
         except Exception as e:
             print(f"Exception in broadcast: {e}")
+            traceback.print_exc()
             raise
 
     def get_hand_landmarks(self):
         try:
             self.handpose = self.queue_handpose.get_nowait()
             self.hand_points = self.queue_points.get_nowait()
-        except mp.queues.Empty:
+            print(f'{self.hand_points}')
+        except queue.Empty:
+        # except mp.queues.Empty:
             print('Queue is empty')
             return
 
@@ -96,9 +104,11 @@ class TCPServer:
                 client_socket, addr = server.accept()
                 self.client = client_socket
                 print(f"[*] Accepted connection from {addr[0]}:{addr[1]}")
+                print(f"[*] client info : {self.client}")
                 self.handle_client()
         except KeyboardInterrupt:
             print("Server shutting down.")
+            traceback.print_exc()
         finally:
             server.close()
 

@@ -4,7 +4,6 @@ from matplotlib.animation import FuncAnimation
 from mpl_toolkits.mplot3d import Axes3D
 import numpy as np
 import multiprocessing as mp
-from quick_queue import QQueue
 import threading
 import time
 import sys, os

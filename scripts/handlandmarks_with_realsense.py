@@ -6,7 +6,7 @@ import os
 import time
 import cv2
 import multiprocessing as mp
-from quick_queue import QQueue
+# from quick_queue import QQueue
 import signal
 
 sys.path.append(os.path.join(os.path.dirname(__file__), '../common'))
