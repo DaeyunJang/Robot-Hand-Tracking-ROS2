@@ -8,6 +8,10 @@
             "includePath": [
                 "${workspaceFoler}/**",
                 "${workspaceFolder}/install/custom_interfaces/include/custom_interfaces",
+                "${workspaceFolder}/src/custom_interfaces/include/custom_interfaces",
+                "${workspaceFolder}/src/custom_interfaces/include/custom_interfaces/**",
+                "${workspaceFolder}/src/custom_interfaces/include/custom_interfaces/msg",
+                "${workspaceFolder}/src/custom_interfaces/msg",
                 "/opt/ros/humble/include/**",
                 "/home/daeyun/Desktop/github_repos/SIFM/**",
                 "/home/daeyun/Desktop/github_repos/SIFM/src/tcp_pkg/include",

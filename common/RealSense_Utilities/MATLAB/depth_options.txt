@@ -1,0 +1,53 @@
+/device_0/sensor_0/option/Alternate_IR/description, Enable/Disable alternate IR
+/device_0/sensor_0/option/Alternate_IR/value, 0.000000
+/device_0/sensor_0/option/Apd_Temperature/description, Avalanche Photo Diode temperature
+/device_0/sensor_0/option/Apd_Temperature/value, 33.078812
+/device_0/sensor_0/option/Confidence_Threshold/description, The confidence level threshold to use to mark a pixel as valid by the depth algorithm
+/device_0/sensor_0/option/Confidence_Threshold/value, 1.000000
+/device_0/sensor_0/option/Depth_Offset/description, Offset from sensor to depth origin in millimetrers
+/device_0/sensor_0/option/Depth_Offset/value, 4.500000
+/device_0/sensor_0/option/Depth_Units/description, Number of meters represented by a single depth unit
+/device_0/sensor_0/option/Depth_Units/value, 0.000250
+/device_0/sensor_0/option/Digital_Gain/description, Change the depth digital gain to: 1 for high gain and 2 for low gain
+/device_0/sensor_0/option/Digital_Gain/value, 1.000000
+/device_0/sensor_0/option/Error_Polling_Enabled/description, Enable / disable polling of camera internal errors
+/device_0/sensor_0/option/Error_Polling_Enabled/value, 1.000000
+/device_0/sensor_0/option/Frames_Queue_Size/description, Max number of frames you can hold at a given time. Increasing this number will reduce frame drops but increase latency, and vice versa
+/device_0/sensor_0/option/Frames_Queue_Size/value, 16.000000
+/device_0/sensor_0/option/Freefall_Detection_Enabled/description, When enabled (default), the sensor will turn off if a free-fall is detected
+/device_0/sensor_0/option/Freefall_Detection_Enabled/value, 1.000000
+/device_0/sensor_0/option/Global_Time_Enabled/description, Enable/Disable global timestamp
+/device_0/sensor_0/option/Global_Time_Enabled/value, 0.000000
+/device_0/sensor_0/option/Host_Performance/description, Optimize based on host performance, low power low performance host or high power high performance host
+/device_0/sensor_0/option/Host_Performance/value, 0.000000
+/device_0/sensor_0/option/Humidity_Temperature/description, Humidity temperature
+/device_0/sensor_0/option/Humidity_Temperature/value, 35.964371
+/device_0/sensor_0/option/Inter_Cam_Sync_Mode/description, Enable multi-camera hardware synchronization mode (disabled on startup); not compatible with free-fall detection
+/device_0/sensor_0/option/Inter_Cam_Sync_Mode/value, 0.000000
+/device_0/sensor_0/option/Invalidation_Bypass/description, Enable/disable pixel invalidation
+/device_0/sensor_0/option/Invalidation_Bypass/value, 0.000000
+/device_0/sensor_0/option/LDD_temperature/description, Laser Driver temperature
+/device_0/sensor_0/option/LDD_temperature/value, 41.458199
+/device_0/sensor_0/option/Laser_Power/description, Power of the laser emitter, with 0 meaning projector off
+/device_0/sensor_0/option/Laser_Power/value, 100.000000
+/device_0/sensor_0/option/Ma_Temperature/description, DSP controller temperature
+/device_0/sensor_0/option/Ma_Temperature/value, 35.222988
+/device_0/sensor_0/option/Mc_Temperature/description, Mems Controller temperature
+/device_0/sensor_0/option/Mc_Temperature/value, 34.228119
+/device_0/sensor_0/option/Min_Distance/description, Minimal distance to the target (in mm)
+/device_0/sensor_0/option/Min_Distance/value, 490.000000
+/device_0/sensor_0/option/Noise_Estimation/description, Noise estimation
+/device_0/sensor_0/option/Noise_Estimation/value, 1242.000000
+/device_0/sensor_0/option/Noise_Filtering/description, Control edges and background noise
+/device_0/sensor_0/option/Noise_Filtering/value, 4.000000
+/device_0/sensor_0/option/Post_Processing_Sharpening/description, Changes the amount of sharpening in the post-processed image
+/device_0/sensor_0/option/Post_Processing_Sharpening/value, 1.000000
+/device_0/sensor_0/option/Pre_Processing_Sharpening/description, Changes the amount of sharpening in the pre-processed image
+/device_0/sensor_0/option/Pre_Processing_Sharpening/value, 0.000000
+/device_0/sensor_0/option/Receiver_Gain/description, Changes the exposure time of Avalanche Photo Diode in the receiver
+/device_0/sensor_0/option/Receiver_Gain/value, 9.000000
+/device_0/sensor_0/option/Sensor_Mode/description, Notify the sensor about the intended streaming mode. Required for preset 
+/device_0/sensor_0/option/Sensor_Mode/value, 2.000000
+/device_0/sensor_0/option/Visual_Preset/description, Preset to calibrate the camera to environment ambient, no ambient or low ambient.
+/device_0/sensor_0/option/Visual_Preset/value, 4.000000
+/device_0/sensor_0/post_processing, Temporal Filter

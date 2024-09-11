@@ -1,0 +1,6 @@
+/device_0/sensor_2/option/Enable_Motion_Correction/description, Enable/Disable Automatic Motion Data Correction
+/device_0/sensor_2/option/Enable_Motion_Correction/value, 1.000000
+/device_0/sensor_2/option/Frames_Queue_Size/description, Max number of frames you can hold at a given time. Increasing this number will reduce frame drops but increase latency, and vice versa
+/device_0/sensor_2/option/Frames_Queue_Size/value, 16.000000
+/device_0/sensor_2/option/Global_Time_Enabled/description, Enable/Disable global timestamp
+/device_0/sensor_2/option/Global_Time_Enabled/value, 0.000000

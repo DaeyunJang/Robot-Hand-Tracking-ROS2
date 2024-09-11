@@ -1,0 +1,33 @@
+/device_0/sensor_1/option/Auto_Exposure_Priority/description, Restrict Auto-Exposure to enforce constant FPS rate. Turn ON to remove the restrictions (may result in FPS drop)
+/device_0/sensor_1/option/Auto_Exposure_Priority/value, 1.000000
+/device_0/sensor_1/option/Backlight_Compensation/description, Enable / disable backlight compensation
+/device_0/sensor_1/option/Backlight_Compensation/value, 128.000000
+/device_0/sensor_1/option/Brightness/description, UVC image brightness
+/device_0/sensor_1/option/Brightness/value, 0.000000
+/device_0/sensor_1/option/Contrast/description, UVC image contrast
+/device_0/sensor_1/option/Contrast/value, 50.000000
+/device_0/sensor_1/option/Enable_Auto_Exposure/description, Enable / disable auto-exposure
+/device_0/sensor_1/option/Enable_Auto_Exposure/value, 1.000000
+/device_0/sensor_1/option/Enable_Auto_White_Balance/description, Enable / disable auto-white-balance
+/device_0/sensor_1/option/Enable_Auto_White_Balance/value, 1.000000
+/device_0/sensor_1/option/Exposure/description, Controls exposure time of color camera. Setting any value will disable auto exposure
+/device_0/sensor_1/option/Exposure/value, 156.000000
+/device_0/sensor_1/option/Frames_Queue_Size/description, Max number of frames you can hold at a given time. Increasing this number will reduce frame drops but increase latency, and vice versa
+/device_0/sensor_1/option/Frames_Queue_Size/value, 16.000000
+/device_0/sensor_1/option/Gain/description, UVC image gain
+/device_0/sensor_1/option/Gain/value, 256.000000
+/device_0/sensor_1/option/Global_Time_Enabled/description, Enable/Disable global timestamp
+/device_0/sensor_1/option/Global_Time_Enabled/value, 0.000000
+/device_0/sensor_1/option/Host_Performance/description, Optimize based on host performance, low power low performance host or high power high performance host
+/device_0/sensor_1/option/Host_Performance/value, 0.000000
+/device_0/sensor_1/option/Hue/description, UVC image hue
+/device_0/sensor_1/option/Hue/value, 0.000000
+/device_0/sensor_1/option/Power_Line_Frequency/description, Power Line Frequency
+/device_0/sensor_1/option/Power_Line_Frequency/value, 1.000000
+/device_0/sensor_1/option/Saturation/description, UVC image saturation setting
+/device_0/sensor_1/option/Saturation/value, 50.000000
+/device_0/sensor_1/option/Sharpness/description, UVC image sharpness setting
+/device_0/sensor_1/option/Sharpness/value, 50.000000
+/device_0/sensor_1/option/White_Balance/description, Controls white balance of color image. Setting any value will disable auto white balance
+/device_0/sensor_1/option/White_Balance/value, 4600.000000
+/device_0/sensor_1/post_processing, Decimation Filter

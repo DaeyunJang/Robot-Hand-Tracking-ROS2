@@ -3,3 +3,6 @@ install
 log
 .git
 venv
+.vscode
+.idea
+
