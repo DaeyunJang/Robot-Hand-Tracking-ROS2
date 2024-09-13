@@ -1,12 +1,16 @@
 import queue
 import socket
 import multiprocessing as mp
+import sys
 import threading
 import json
 import time
 import numpy as np
 import struct
 import traceback
+
+from boost.mpi import world
+
 
 class TCPServer:
     def __init__(self, queue_handpose, queue_points):
@@ -15,7 +19,8 @@ class TCPServer:
         self.handpose = None
         self.hand_points = np.zeros((21, 3))
         self.config = self.load_config('tcp_config.json')
-        self.host = self.config['host']
+        # self.host = self.config['host']
+        self.host = self.config['local_host']
         self.port = self.config['port']
         self.buffer_size = self.config['buffer_size']
         self.lock = threading.Lock()
@@ -47,7 +52,7 @@ class TCPServer:
             print(f"Exception in handle_client: {e}")
             traceback.print_exc()
         finally:
-            print(f"[*] Client {self.client.getpeername()} disconnected.")
+            # print(f"[*] Client {self.client.getpeername()} disconnected.")
             self.client.close()
 
     def client_callback(self):
@@ -61,22 +66,16 @@ class TCPServer:
 
     def broadcast(self, client_socket):
         # t = self.handpose['world_landmarks']
-        print(f'handpose : {self.handpose}')
+        # print(f'handpose : {self.handpose}')
         if self.handpose is None or self.handpose['index'] is None:
             data = b'NONE' + b'\0' * (self.buffer_size - len('NONE'))
-            serialized_data = data
+            byte_data = data
         else:
             world_landmarks = self.handpose['world_landmarks']
-            data_flat = world_landmarks.flatten()
-            serialized_data = struct.pack(f'!{data_flat.size}f', *data_flat)
-
-            padding_size = self.buffer_size - len(serialized_data)
-            serialized_data = serialized_data + b'\0' * padding_size
-
-        print(f'serialized_data (byte={len(serialized_data)}): {serialized_data}')
-
+            byte_data = world_landmarks.tobytes()
+            print(f'{world_landmarks[0]} {world_landmarks[1]} {world_landmarks[2]}')
         try:
-            client_socket.sendall(serialized_data)
+            client_socket.sendall(byte_data)
         except Exception as e:
             print(f"Exception in broadcast: {e}")
             traceback.print_exc()
@@ -86,10 +85,10 @@ class TCPServer:
         try:
             self.handpose = self.queue_handpose.get_nowait()
             self.hand_points = self.queue_points.get_nowait()
-            print(f'{self.hand_points}')
+            # print(f'{self.hand_points}')
         except queue.Empty:
         # except mp.queues.Empty:
-            print('Queue is empty')
+        #     print('Queue is empty')
             return
 
     def start_server(self):
@@ -100,6 +99,7 @@ class TCPServer:
 
         try:
             while True:
+                time.sleep(0.5)
                 print(f"[*] Listening on {self.host}:{self.port}")
                 client_socket, addr = server.accept()
                 self.client = client_socket

@@ -1,0 +1,7 @@
+pytest==6.2.5
+setuptools==59.6.0
+mediapipe==0.10.15
+numpy==1.26.4
+pyrealsense2==2.55.1.6486
+matplotlib==3.5.1
+Pillow==9.0.1
