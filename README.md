@@ -4,7 +4,7 @@ Hand tracking using camera and 6-axis robot arm with ROS2
 ## Demo with the simulation
 #### Visual servoing
 Test on Doosan Robot simulation
-![Image Description](https://github.com/Bigyuun/teleop_robot_ws/blob/humble/media/ros2_system_config.png)
+![Image Description](https://github.com/DaeyunJang/Robot-Hand-Tracking-ROS2/tree/humble/media/ros2_system_config.png)
 
 
 ---
