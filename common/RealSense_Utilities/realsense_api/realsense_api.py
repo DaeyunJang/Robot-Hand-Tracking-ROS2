@@ -107,7 +107,7 @@ class RealSenseCamera:
         self.hole_filling: HoleFillingOptions = HoleFillingOptions()
 
         # Decimation filter attribute 
-        self.decimation_magnitude = 3
+        self.decimation_magnitude = 2
 
         # Spatial filter attributes
         self.spatial_magnitude = 2
@@ -121,8 +121,7 @@ class RealSenseCamera:
         self.persistency_index = 5
 
         # Holes Filling filter attribute
-        self.hole_filling_param = 1 # farest
-        # self.hole_filling_param = 2 # nearest
+        self.hole_filling_param = 1
 
         self.decimation_filter = rs.decimation_filter()
         self.decimation_filter.set_option(
@@ -182,17 +181,18 @@ class RealSenseCamera:
             self.jsonObj = json.load(open(config_file_path))
             # self.jsonObj = json.load(open("./d405_0321.json"))
         elif self.device_type == 'd415':
-            self.jsonObj = json.load(open("./d415_0131.json"))
+            config_file_path = os.path.join(script_dir, 'd415.json')
+            self.jsonObj = json.load(open(config_file_path))
+        elif self.device_type == 'l515':
+            config_file_path = os.path.join(script_dir, 'l515.json')
+            self.jsonObj = json.load(open(config_file_path))
 
 
         print(f"{self.device_type} is selected...")
 
         self.pipeline = rs.pipeline()
-
-        # restart for initializing
-        # self.stop()
-
         config = rs.config()
+
         config.enable_device(self.device.get_info(rs.camera_info.serial_number))
 
         config.enable_stream(rs.stream.depth,
@@ -215,8 +215,8 @@ class RealSenseCamera:
 
         # Get depth scale
         depth_sensor = self.profile.get_device().first_depth_sensor()
-        depth_sensor.set_option(rs.option.emitter_enabled, 1)
-        # depth_sensor.set_option(rs.option.visual_preset, 4) # 4 corresponds to 'Hand' preset
+        if not self.device_type == 'l515':
+            depth_sensor.set_option(rs.option.emitter_enabled, 1)
         self.depth_scale = depth_sensor.get_depth_scale()
 
         self.color_intrinsics = self.profile.get_stream(rs.stream.color).as_video_stream_profile().get_intrinsics()
@@ -228,20 +228,20 @@ class RealSenseCamera:
             dtype=np.float64)
         self.dist_coeffs = np.array([self.color_intrinsics.coeffs], dtype=np.float64)
 
-        if adv_mode_flag:
+        if adv_mode_flag and not self.device_type == 'l515':
             self.adv_mode()
+        elif adv_mode_flag and self.device_type == 'l515':
+            ser_dev = rs.serializable_device(self.device)
+            json_string = str(self.jsonObj).replace("'", '\"')
+            ser_dev.load_json(json_string)
 
-        if disable_color_auto_exposure:
-            color_sensor = self.sensor[1]
-            color_sensor.set_option(rs.option.auto_exposure_priority, 0)
-            color_sensor.set_option(rs.option.enable_auto_exposure, 0)
+        # if disable_color_auto_exposure:
+        #     color_sensor = self.sensor[1]
+        #     color_sensor.set_option(rs.option.auto_exposure_priority, 0)
+        #     color_sensor.set_option(rs.option.enable_auto_exposure, 0)
 
     def __iter__(self):
         return self.device.get_info(rs.camera_info.serial_number)
-
-    def __del__(self):
-        # self.stop()
-        pass
 
     # def get_options(self):
     def get_data(self):
@@ -278,6 +278,9 @@ class RealSenseCamera:
         self.depth_frame_aligned = frameset.get_depth_frame()
         self.color_frame_aligned = frameset.get_color_frame()
         self.frameset = frameset
+
+    def get_filtered_intr(self):
+        return self.profile.get_stream(rs.stream.depth).as_video_stream_profile().get_intrinsics()
 
     def filter_depth_data(self,
                           enable_decimation=False,
@@ -358,17 +361,7 @@ class RealSenseCamera:
         json_string = str(self.jsonObj).replace("'", '\"')
 
         advnc_mode_arg = rs.rs400_advanced_mode(self.device)
-        if not advnc_mode_arg.is_enabled():
-            advnc_mode_arg.toggle_advanced_mode(True)
-
-        for i in range(5):
-            try:
-                advnc_mode_arg.load_json(json_string)
-                break
-            except Exception as e:
-                print(f'[realsense_api.py] {e}. Retry ({i}/5)')
-                time.sleep(1)
+        advnc_mode_arg.load_json(json_string)
 
     def stop(self):
-        print("[realsense api] pipeline.stop")
         self.pipeline.stop()
