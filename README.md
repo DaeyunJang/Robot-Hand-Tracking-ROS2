@@ -1,3 +1,8 @@
+## ⚠️ Notice: Part of this repository has moved.  
+The **Mediapipe Hand → ROS2 wrapper** component is now actively developed and maintained at
+<a href="https://github.com/DaeyunJang/HandPose-ROS2">https://github.com/DaeyunJang/HandPose-ROS2</a>.<br>
+Please open new issues and pull requests there. This repository is kept for reference/archival purposes.
+
 # Robot-Hand-Tracking-ROS2
 Hand tracking using camera and 6-axis robot arm with ROS2
 
